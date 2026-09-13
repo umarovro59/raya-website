@@ -4,12 +4,12 @@ import "./globals.css";
 
 const manrope = Manrope({
   variable: "--font-manrope",
-  subsets: ["latin"],
+  subsets: ["cyrillic", "latin"],
 });
 
 const unbounded = Unbounded({
   variable: "--font-unbounded",
-  subsets: ["latin"],
+  subsets: ["cyrillic", "latin"],
 });
 
 export const metadata: Metadata = {

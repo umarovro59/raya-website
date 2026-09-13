@@ -106,19 +106,32 @@ function MobileNavigation({
 
 function ProductCan({
   flavour,
-  transitioning,
+  transitionPhase,
   initialAnimation,
-  onTransitionEnd,
+  onInitialAnimationEnd,
+  onProductOut,
 }: {
   flavour: (typeof flavours)[number];
-  transitioning: boolean;
+  transitionPhase: "idle" | "out" | "swap" | "in";
   initialAnimation: boolean;
-  onTransitionEnd: () => void;
+  onInitialAnimationEnd: () => void;
+  onProductOut: () => void;
 }) {
   return (
     <div
-      className={`product-can ${initialAnimation ? "is-initial" : ""} ${transitioning ? "is-changing" : ""}`}
-      onAnimationEnd={onTransitionEnd}
+      className={`product-can ${initialAnimation ? "is-initial" : ""} product-can-${transitionPhase}`}
+      onAnimationEnd={(event) => {
+        if (event.animationName === "can-enter") onInitialAnimationEnd();
+      }}
+      onTransitionEnd={(event) => {
+        if (
+          event.target === event.currentTarget &&
+          event.propertyName === "opacity" &&
+          transitionPhase === "out"
+        ) {
+          onProductOut();
+        }
+      }}
     >
       <Image
         src={flavour.image}
@@ -200,12 +213,19 @@ function FlavourSelector({
 export default function Home() {
   const [language, setLanguage] = useState<Language>("en");
   const [activeId, setActiveId] = useState<FlavourId>("pomegranate");
+  const [displayedFlavourId, setDisplayedFlavourId] =
+    useState<FlavourId>("pomegranate");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [transitioning, setTransitioning] = useState(false);
+  const [transitionPhase, setTransitionPhase] = useState<
+    "idle" | "out" | "swap" | "in"
+  >("idle");
   const [initialAnimation, setInitialAnimation] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
   const activeFlavour =
     flavours.find((flavour) => flavour.id === activeId) ?? flavours[0];
+  const displayedFlavour =
+    flavours.find((flavour) => flavour.id === displayedFlavourId) ??
+    flavours[0];
   const copy = heroCopy[language];
 
   useEffect(() => {
@@ -242,9 +262,16 @@ export default function Home() {
 
   const selectFlavour = (id: FlavourId) => {
     if (id === activeId) return;
-    setTransitioning(true);
+    setInitialAnimation(false);
     setActiveId(id);
+    setTransitionPhase("out");
   };
+
+  useEffect(() => {
+    if (transitionPhase !== "swap") return;
+    const frame = window.requestAnimationFrame(() => setTransitionPhase("in"));
+    return () => window.cancelAnimationFrame(frame);
+  }, [transitionPhase]);
 
   const selectLanguage = (nextLanguage: Language) => {
     setLanguage(nextLanguage);
@@ -253,7 +280,7 @@ export default function Home() {
 
   return (
     <main
-      className={`campaign ${transitioning ? "is-transitioning" : ""} ${hasScrolled ? "has-scrolled" : ""}`}
+      className={`campaign ${hasScrolled ? "has-scrolled" : ""}`}
       id="hero"
       style={
         {
@@ -282,14 +309,23 @@ export default function Home() {
           <p className="hero-copy">{activeFlavour.copy[language]}</p>
         </div>
         <div className="product-scene">
-          <div className="radial-light" aria-hidden="true" />
+          <div
+            className={`radial-light ${initialAnimation ? "is-initial" : ""} radial-light-${transitionPhase}`}
+            style={
+              {
+                "--product-light": displayedFlavour.light,
+              } as React.CSSProperties
+            }
+            aria-hidden="true"
+          />
           <ProductCan
-            flavour={activeFlavour}
-            transitioning={transitioning}
+            flavour={displayedFlavour}
+            transitionPhase={transitionPhase}
             initialAnimation={initialAnimation}
-            onTransitionEnd={() => {
-              if (initialAnimation) setInitialAnimation(false);
-              if (transitioning) setTransitioning(false);
+            onInitialAnimationEnd={() => setInitialAnimation(false)}
+            onProductOut={() => {
+              setDisplayedFlavourId(activeId);
+              setTransitionPhase("swap");
             }}
           />
           <div className="contact-shadow" aria-hidden="true" />
