@@ -295,9 +295,7 @@ export default function Home() {
           <div className="contact-shadow" aria-hidden="true" />
         </div>
         <div className="flavour-lockup">
-          <h2>
-            {activeFlavour.name[language]}
-          </h2>
+          <h2>{activeFlavour.name[language]}</h2>
           <p>{activeFlavour.copy[language]}</p>
           <span>330 ML</span>
         </div>
@@ -308,7 +306,9 @@ export default function Home() {
         onSelect={selectFlavour}
         language={language}
       />
-      <div className="scroll-cue" aria-hidden="true"><span>FLAVOURS ↓</span></div>
+      <div className="scroll-cue" aria-hidden="true">
+        <span>FLAVOURS ↓</span>
+      </div>
     </main>
   );
 }
