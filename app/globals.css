@@ -36,11 +36,21 @@ a {
   min-height: 100svh;
   flex-direction: column;
   overflow: visible;
-  background: var(--flavour-bg);
+  background: var(--flavour-bg-base);
   color: var(--flavour-text);
-  transition:
-    background-color 850ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 850ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color 850ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.campaign-background {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background: var(--flavour-bg-next);
+  opacity: 0;
+  transition: opacity 850ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.campaign-background.is-transitioning {
+  opacity: 1;
 }
 .site-header {
   position: relative;
@@ -166,13 +176,13 @@ a {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--product-light) 76%, transparent) 0%,
-    color-mix(in srgb, var(--product-light) 27%, transparent) 38%,
-    transparent 70%
+    color-mix(in srgb, var(--product-light) 62%, transparent) 0%,
+    color-mix(in srgb, var(--product-light) 30%, transparent) 28%,
+    color-mix(in srgb, var(--product-light) 9%, transparent) 52%,
+    transparent 74%
   );
   z-index: 1;
   opacity: 0.7;
-  filter: blur(24px);
   transition: opacity 210ms cubic-bezier(0.55, 0, 1, 0.45);
 }
 .radial-light.is-initial {
@@ -203,15 +213,18 @@ a {
 .product-can-out {
   opacity: 0;
   transform: translateY(16px) scale(0.985);
+  will-change: opacity, transform;
 }
 .product-can-swap {
   opacity: 0;
   transform: translateY(16px) scale(0.985);
+  will-change: opacity, transform;
 }
 .product-can-in {
   opacity: 1;
   transform: translateY(0) scale(1);
   transition-duration: 300ms;
+  will-change: opacity, transform;
 }
 .contact-shadow {
   position: absolute;
@@ -312,7 +325,7 @@ a {
   text-transform: uppercase;
   transform: translateX(-50%);
   transition: opacity 300ms ease;
-  animation: cue-drift 2.8s ease-in-out infinite;
+  animation: cue-drift 2.8s ease-in-out 2;
 }
 .has-scrolled .scroll-cue {
   opacity: 0;
@@ -328,6 +341,9 @@ a {
   }
 }
 .product-can img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 @keyframes name-enter {
@@ -468,7 +484,6 @@ a {
   .radial-light {
     width: 100vw;
     opacity: 0.42;
-    filter: blur(24px);
   }
   .contact-shadow {
     bottom: 4%;
@@ -550,6 +565,10 @@ a {
     place-items: center;
   }
   .mobile-panel-product img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     z-index: 1;
     object-fit: contain;
   }

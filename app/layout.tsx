@@ -23,6 +23,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${manrope.variable} ${unbounded.variable} h-full antialiased`}
     >
+      <link
+        rel="preload"
+        as="image"
+        href="/images/cans/pomegranate.webp"
+        type="image/webp"
+        fetchPriority="high"
+      />
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

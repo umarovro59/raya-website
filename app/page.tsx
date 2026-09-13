@@ -1,7 +1,7 @@
 "use client";
 
+import { startTransition, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { startTransition, useEffect, useState } from "react";
 import {
   flavours,
   heroCopy,
@@ -110,12 +110,14 @@ function ProductCan({
   initialAnimation,
   onInitialAnimationEnd,
   onProductOut,
+  onProductIn,
 }: {
   flavour: (typeof flavours)[number];
-  transitionPhase: "idle" | "out" | "swap" | "in";
+  transitionPhase: "idle" | "waiting" | "out" | "swap" | "in";
   initialAnimation: boolean;
   onInitialAnimationEnd: () => void;
   onProductOut: () => void;
+  onProductIn: () => void;
 }) {
   return (
     <div
@@ -126,10 +128,10 @@ function ProductCan({
       onTransitionEnd={(event) => {
         if (
           event.target === event.currentTarget &&
-          event.propertyName === "opacity" &&
-          transitionPhase === "out"
+          event.propertyName === "opacity"
         ) {
-          onProductOut();
+          if (transitionPhase === "out") onProductOut();
+          if (transitionPhase === "in") onProductIn();
         }
       }}
     >
@@ -138,8 +140,8 @@ function ProductCan({
         alt={`RAYA ${flavour.name.en} can`}
         fill
         priority
-        loading="eager"
-        sizes="(max-width: 700px) 70vw, 460px"
+        unoptimized
+        decoding="async"
       />
     </div>
   );
@@ -171,7 +173,9 @@ function MobileFlavourSequence({ language }: { language: Language }) {
               src={flavour.image}
               alt={`RAYA ${flavour.name.en} can`}
               fill
-              sizes="(max-width: 700px) 76vw, 0px"
+              unoptimized
+              loading={flavour.id === "pomegranate" ? "eager" : "lazy"}
+              decoding="async"
             />
           </div>
           <div className="mobile-panel-lockup">
@@ -217,15 +221,25 @@ export default function Home() {
     useState<FlavourId>("pomegranate");
   const [menuOpen, setMenuOpen] = useState(false);
   const [transitionPhase, setTransitionPhase] = useState<
-    "idle" | "out" | "swap" | "in"
+    "idle" | "waiting" | "out" | "swap" | "in"
   >("idle");
   const [initialAnimation, setInitialAnimation] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [backgroundBaseId, setBackgroundBaseId] =
+    useState<FlavourId>("pomegranate");
+  const [backgroundTransitioning, setBackgroundTransitioning] = useState(false);
+  const readyFlavoursRef = useRef<Set<FlavourId>>(
+    new Set(["pomegranate"]),
+  );
+  const activeIdRef = useRef<FlavourId>("pomegranate");
+  const [readyVersion, setReadyVersion] = useState(0);
   const activeFlavour =
     flavours.find((flavour) => flavour.id === activeId) ?? flavours[0];
   const displayedFlavour =
     flavours.find((flavour) => flavour.id === displayedFlavourId) ??
     flavours[0];
+  const backgroundBaseFlavour =
+    flavours.find((flavour) => flavour.id === backgroundBaseId) ?? flavours[0];
   const copy = heroCopy[language];
 
   useEffect(() => {
@@ -243,13 +257,32 @@ export default function Home() {
   }, [language]);
 
   useEffect(() => {
-    const preloadImages = flavours.map((flavour) => {
+    let cancelled = false;
+    const preloadFlavours = window.matchMedia("(min-width: 701px)").matches
+      ? flavours
+      : flavours.slice(0, 2);
+    const preloadImages = preloadFlavours.map(async (flavour) => {
       const image = new window.Image();
+      image.decoding = "async";
+      image.fetchPriority = flavour.id === "pomegranate" ? "high" : "low";
       image.src = flavour.image;
-      return image.decode?.().catch(() => undefined);
+      try {
+        await new Promise<void>((resolve, reject) => {
+          image.onload = () => resolve();
+          image.onerror = () => reject(new Error(`Failed to load ${flavour.id}`));
+        });
+        if (image.decode) await image.decode();
+        if (!cancelled) {
+          readyFlavoursRef.current.add(flavour.id);
+          setReadyVersion((version) => version + 1);
+        }
+      } catch {
+        return;
+      }
     });
     return () => {
-      preloadImages.length = 0;
+      cancelled = true;
+      void Promise.allSettled(preloadImages);
     };
   }, []);
 
@@ -263,15 +296,30 @@ export default function Home() {
   const selectFlavour = (id: FlavourId) => {
     if (id === activeId) return;
     setInitialAnimation(false);
+    activeIdRef.current = id;
+    setBackgroundBaseId(activeId);
+    setBackgroundTransitioning(true);
     setActiveId(id);
-    setTransitionPhase("out");
+    if (transitionPhase === "idle" || transitionPhase === "waiting") {
+      if (readyFlavoursRef.current.has(id)) setTransitionPhase("out");
+      else setTransitionPhase("waiting");
+    }
   };
 
   useEffect(() => {
+    if (transitionPhase === "idle" || transitionPhase === "waiting") {
+      if (
+        activeId !== displayedFlavourId &&
+        readyFlavoursRef.current.has(activeId)
+      ) {
+        setTransitionPhase("out");
+      }
+      return;
+    }
     if (transitionPhase !== "swap") return;
     const frame = window.requestAnimationFrame(() => setTransitionPhase("in"));
     return () => window.cancelAnimationFrame(frame);
-  }, [transitionPhase]);
+  }, [activeId, displayedFlavourId, readyVersion, transitionPhase]);
 
   const selectLanguage = (nextLanguage: Language) => {
     setLanguage(nextLanguage);
@@ -285,11 +333,23 @@ export default function Home() {
       style={
         {
           "--flavour-bg": activeFlavour.background,
+          "--flavour-bg-base": backgroundBaseFlavour.background,
           "--flavour-light": activeFlavour.light,
           "--flavour-text": activeFlavour.textColor,
         } as React.CSSProperties
       }
     >
+      <div
+        className={`campaign-background ${backgroundTransitioning ? "is-transitioning" : ""}`}
+        style={{ "--flavour-bg-next": activeFlavour.background } as React.CSSProperties}
+        onTransitionEnd={(event) => {
+          if (event.propertyName === "opacity") {
+            setBackgroundBaseId(activeIdRef.current);
+            setBackgroundTransitioning(false);
+          }
+        }}
+        aria-hidden="true"
+      />
       <Header
         language={language}
         menuOpen={menuOpen}
@@ -324,9 +384,15 @@ export default function Home() {
             initialAnimation={initialAnimation}
             onInitialAnimationEnd={() => setInitialAnimation(false)}
             onProductOut={() => {
-              setDisplayedFlavourId(activeId);
-              setTransitionPhase("swap");
+              const nextId = activeIdRef.current;
+              if (readyFlavoursRef.current.has(nextId)) {
+                setDisplayedFlavourId(nextId);
+                setTransitionPhase("swap");
+              } else {
+                setTransitionPhase("waiting");
+              }
             }}
+            onProductIn={() => setTransitionPhase("idle")}
           />
           <div className="contact-shadow" aria-hidden="true" />
         </div>

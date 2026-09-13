@@ -24,7 +24,7 @@ export type Flavour = {
 export const flavours: Flavour[] = [
   {
     id: "pomegranate",
-    image: "/images/cans/pomegranate.png",
+    image: "/images/cans/pomegranate.webp",
     background: "#B72C29",
     light: "#E45A48",
     textColor: "#FFF7F1",
@@ -37,7 +37,7 @@ export const flavours: Flavour[] = [
   },
   {
     id: "pear",
-    image: "/images/cans/pear.png",
+    image: "/images/cans/pear.webp",
     background: "#D5DF70",
     light: "#EEF2A8",
     textColor: "#19200F",
@@ -50,7 +50,7 @@ export const flavours: Flavour[] = [
   },
   {
     id: "blackberry",
-    image: "/images/cans/blackberry.png",
+    image: "/images/cans/blackberry.webp",
     background: "#422346",
     light: "#754A77",
     textColor: "#FBF5FA",
@@ -63,7 +63,7 @@ export const flavours: Flavour[] = [
   },
   {
     id: "mojito",
-    image: "/images/cans/mojito.png",
+    image: "/images/cans/mojito.webp",
     background: "#A9C94B",
     light: "#D4E882",
     textColor: "#17210E",
@@ -76,7 +76,7 @@ export const flavours: Flavour[] = [
   },
   {
     id: "apple-malt",
-    image: "/images/cans/apple-malt.png",
+    image: "/images/cans/apple-malt.webp",
     background: "#C49A4C",
     light: "#E1C478",
     textColor: "#20180D",
