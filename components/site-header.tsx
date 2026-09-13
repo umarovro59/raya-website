@@ -32,16 +32,35 @@ export function SiteHeader({
   }, [pathname, onMenuClose]);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
+    if (!menuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onMenuClose();
     };
-  }, [menuOpen]);
+    const desktop = window.matchMedia("(min-width: 701px)");
+    const handleResize = () => {
+      if (desktop.matches) onMenuClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    desktop.addEventListener("change", handleResize);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+      desktop.removeEventListener("change", handleResize);
+    };
+  }, [menuOpen, onMenuClose]);
 
   return (
     <>
       <header className="site-header">
-        <Link className="wordmark" href="/" aria-label="RAYA home">
+        <Link
+          className="wordmark"
+          href="/"
+          aria-label="RAYA home"
+          onClick={onMenuClose}
+        >
           RAYA
         </Link>
         <nav className="desktop-navigation" aria-label="Main navigation">
@@ -84,6 +103,7 @@ export function SiteHeader({
         className={`mobile-navigation ${menuOpen ? "is-open" : ""}`}
         id="mobile-navigation"
         aria-hidden={!menuOpen}
+        inert={!menuOpen}
       >
         <div className="mobile-navigation-links">
           {links.map((link, index) => (

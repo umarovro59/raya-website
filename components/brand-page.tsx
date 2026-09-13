@@ -35,12 +35,6 @@ function StoryPage({ copy }: { copy: Record<string, string> }) {
         <h1>{copy.title}</h1>
         <p className="brand-intro">{copy.intro}</p>
       </section>
-      <section className="story-origin brand-band">
-        <div>
-          <p className="brand-eyebrow">ORIGIN</p>
-          <h2>{copy.origin}</h2>
-        </div>
-      </section>
       <section className="story-identity brand-band">
         <div className="identity-copy">
           <p className="brand-eyebrow">PRODUCT IDENTITY</p>
@@ -145,7 +139,6 @@ function WhereToBuyPage({ copy }: { copy: Record<string, string> }) {
         </div>
         <div className="locator-field" aria-label={copy.search}>
           {copy.search}
-          <span>+</span>
         </div>
       </section>
       <section className="locator-product">
@@ -202,7 +195,7 @@ export function BrandPage({ page }: { page: SitePage }) {
       )}
       {page === "lifestyle" && <LifestylePage copy={copy} />}
       {page === "whereToBuy" && <WhereToBuyPage copy={copy} />}
-      <SiteFooter language={language} onLanguageChange={setLanguage} />
+      <SiteFooter language={language} onLanguageChange={handleLanguageChange} />
     </main>
   );
 }

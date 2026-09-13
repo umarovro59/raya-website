@@ -26,6 +26,7 @@ function ProductCan({
   onInitialAnimationEnd,
   onProductOut,
   onProductIn,
+  onProductReady,
 }: {
   flavour: (typeof flavours)[number];
   transitionPhase: "idle" | "waiting" | "out" | "swap" | "in";
@@ -33,12 +34,41 @@ function ProductCan({
   onInitialAnimationEnd: () => void;
   onProductOut: () => void;
   onProductIn: () => void;
+  onProductReady: (id: FlavourId) => void;
 }) {
+  const imageRef = useRef<HTMLImageElement>(null);
+  const reportImageReady = useCallback(
+    async (image: HTMLImageElement) => {
+      const source = image.currentSrc || image.src;
+
+      try {
+        if (image.decode) await image.decode();
+      } catch {
+        if (!image.complete || image.naturalWidth === 0) return;
+      }
+
+      if (
+        imageRef.current === image &&
+        (image.currentSrc || image.src) === source
+      ) {
+        onProductReady(flavour.id);
+      }
+    },
+    [flavour.id, onProductReady],
+  );
+
+  useEffect(() => {
+    const image = imageRef.current;
+    if (image?.complete && image.naturalWidth > 0) {
+      void reportImageReady(image);
+    }
+  }, [reportImageReady]);
+
   return (
     <div
-      className={`product-can ${initialAnimation ? "is-initial" : ""} product-can-${transitionPhase}`}
+      className={`product-visual ${initialAnimation ? "is-initial" : ""} product-visual-${transitionPhase}`}
       onAnimationEnd={(event) => {
-        if (event.animationName === "can-enter") onInitialAnimationEnd();
+        if (event.animationName === "product-reveal") onInitialAnimationEnd();
       }}
       onTransitionEnd={(event) => {
         if (
@@ -50,14 +80,20 @@ function ProductCan({
         }
       }}
     >
-      <Image
-        src={flavour.image}
-        alt={`RAYA ${flavour.name.en} can`}
-        fill
-        priority
-        unoptimized
-        decoding="async"
-      />
+      <div
+        className={`product-can ${initialAnimation ? "is-initial" : ""} product-can-${transitionPhase}`}
+      >
+        <Image
+          ref={imageRef}
+          src={flavour.image}
+          alt={`RAYA ${flavour.name.en} can`}
+          fill
+          priority
+          unoptimized
+          decoding="async"
+          onLoad={(event) => void reportImageReady(event.currentTarget)}
+        />
+      </div>
     </div>
   );
 }
@@ -74,6 +110,7 @@ function MobileFlavourSequence({
       {flavours.map((flavour) => (
         <section
           className="mobile-flavour-panel"
+          data-flavour={flavour.id}
           key={flavour.id}
           style={
             {
@@ -155,6 +192,8 @@ export default function Home() {
   const activeIdRef = useRef<FlavourId>("pomegranate");
   const mobileCanZoomedRef = useRef(false);
   const [readyVersion, setReadyVersion] = useState(0);
+  const [displayedImageReadyId, setDisplayedImageReadyId] =
+    useState<FlavourId | null>("pomegranate");
   const activeFlavour =
     flavours.find((flavour) => flavour.id === activeId) ?? flavours[0];
   const displayedFlavour =
@@ -241,7 +280,8 @@ export default function Home() {
     setBackgroundTransitioning(true);
     setActiveId(id);
     if (transitionPhase === "idle" || transitionPhase === "waiting") {
-      if (readyFlavoursRef.current.has(id)) setTransitionPhase("out");
+      if (id === displayedFlavourId) setTransitionPhase("idle");
+      else if (readyFlavoursRef.current.has(id)) setTransitionPhase("out");
       else setTransitionPhase("waiting");
     }
   };
@@ -257,9 +297,29 @@ export default function Home() {
       return;
     }
     if (transitionPhase !== "swap") return;
+    // Stay fully hidden while the latest selection loads, including clicks
+    // received during OUT or SWAP. Never return to visible WAITING after OUT.
+    if (activeId !== displayedFlavourId) {
+      if (readyFlavoursRef.current.has(activeId)) {
+        setDisplayedImageReadyId(null);
+        setDisplayedFlavourId(activeId);
+      }
+      return;
+    }
+    if (displayedImageReadyId !== displayedFlavourId) return;
     const frame = window.requestAnimationFrame(() => setTransitionPhase("in"));
     return () => window.cancelAnimationFrame(frame);
-  }, [activeId, displayedFlavourId, readyVersion, transitionPhase]);
+  }, [
+    activeId,
+    displayedFlavourId,
+    displayedImageReadyId,
+    readyVersion,
+    transitionPhase,
+  ]);
+
+  const handleProductReady = useCallback((id: FlavourId) => {
+    setDisplayedImageReadyId(id);
+  }, []);
 
   const selectLanguage = (nextLanguage: Language) => {
     setLanguage(nextLanguage);
@@ -310,30 +370,14 @@ export default function Home() {
           <p className="hero-copy">{activeFlavour.copy[language]}</p>
         </div>
         <div className="product-scene">
-          <div
-            className={`radial-light ${initialAnimation ? "is-initial" : ""} radial-light-${transitionPhase}`}
-            style={
-              {
-                "--product-light": displayedFlavour.light,
-              } as React.CSSProperties
-            }
-            aria-hidden="true"
-          />
           <ProductCan
             flavour={displayedFlavour}
             transitionPhase={transitionPhase}
             initialAnimation={initialAnimation}
             onInitialAnimationEnd={() => setInitialAnimation(false)}
-            onProductOut={() => {
-              const nextId = activeIdRef.current;
-              if (readyFlavoursRef.current.has(nextId)) {
-                setDisplayedFlavourId(nextId);
-                setTransitionPhase("swap");
-              } else {
-                setTransitionPhase("waiting");
-              }
-            }}
+            onProductOut={() => setTransitionPhase("swap")}
             onProductIn={() => setTransitionPhase("idle")}
+            onProductReady={handleProductReady}
           />
           <div className="contact-shadow" aria-hidden="true" />
         </div>

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { type MouseEvent } from "react";
 import { navigation, type Language } from "../app/flavours";
 import { siteRoutes } from "./site-routes";
 
@@ -10,14 +9,6 @@ export function SiteFooter({
   language: Language;
   onLanguageChange: (language: Language) => void;
 }) {
-  const handleLanguageClick = (
-    event: MouseEvent<HTMLButtonElement>,
-    next: Language,
-  ) => {
-    event.preventDefault();
-    onLanguageChange(next);
-  };
-
   return (
     <footer className="site-footer">
       <div className="site-footer-brand">RAYA</div>
@@ -51,7 +42,7 @@ export function SiteFooter({
               className={item === language ? "is-active" : ""}
               key={item}
               type="button"
-              onClick={(event) => handleLanguageClick(event, item)}
+              onClick={() => onLanguageChange(item)}
               aria-pressed={item === language}
             >
               {item.toUpperCase()}
