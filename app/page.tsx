@@ -147,7 +147,13 @@ function ProductCan({
   );
 }
 
-function MobileFlavourSequence({ language }: { language: Language }) {
+function MobileFlavourSequence({
+  language,
+  canZoomed,
+}: {
+  language: Language;
+  canZoomed: boolean;
+}) {
   return (
     <div className="mobile-flavour-sequence">
       {flavours.map((flavour) => (
@@ -170,6 +176,7 @@ function MobileFlavourSequence({ language }: { language: Language }) {
           <div className="mobile-panel-product">
             <div className="mobile-panel-light" aria-hidden="true" />
             <Image
+              className={`mobile-panel-can ${canZoomed ? "is-zoomed" : ""}`}
               src={flavour.image}
               alt={`RAYA ${flavour.name.en} can`}
               fill
@@ -225,13 +232,13 @@ export default function Home() {
   >("idle");
   const [initialAnimation, setInitialAnimation] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [mobileCanZoomed, setMobileCanZoomed] = useState(false);
   const [backgroundBaseId, setBackgroundBaseId] =
     useState<FlavourId>("pomegranate");
   const [backgroundTransitioning, setBackgroundTransitioning] = useState(false);
-  const readyFlavoursRef = useRef<Set<FlavourId>>(
-    new Set(["pomegranate"]),
-  );
+  const readyFlavoursRef = useRef<Set<FlavourId>>(new Set(["pomegranate"]));
   const activeIdRef = useRef<FlavourId>("pomegranate");
+  const mobileCanZoomedRef = useRef(false);
   const [readyVersion, setReadyVersion] = useState(0);
   const activeFlavour =
     flavours.find((flavour) => flavour.id === activeId) ?? flavours[0];
@@ -269,7 +276,8 @@ export default function Home() {
       try {
         await new Promise<void>((resolve, reject) => {
           image.onload = () => resolve();
-          image.onerror = () => reject(new Error(`Failed to load ${flavour.id}`));
+          image.onerror = () =>
+            reject(new Error(`Failed to load ${flavour.id}`));
         });
         if (image.decode) await image.decode();
         if (!cancelled) {
@@ -291,6 +299,23 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleMobileCanZoom = () => {
+      if (window.innerWidth > 700) return;
+      const scrollY = window.scrollY;
+      if (!mobileCanZoomedRef.current && scrollY > 16) {
+        mobileCanZoomedRef.current = true;
+        setMobileCanZoomed(true);
+      } else if (mobileCanZoomedRef.current && scrollY <= 2) {
+        mobileCanZoomedRef.current = false;
+        setMobileCanZoomed(false);
+      }
+    };
+    window.addEventListener("scroll", handleMobileCanZoom, { passive: true });
+    handleMobileCanZoom();
+    return () => window.removeEventListener("scroll", handleMobileCanZoom);
   }, []);
 
   const selectFlavour = (id: FlavourId) => {
@@ -341,7 +366,11 @@ export default function Home() {
     >
       <div
         className={`campaign-background ${backgroundTransitioning ? "is-transitioning" : ""}`}
-        style={{ "--flavour-bg-next": activeFlavour.background } as React.CSSProperties}
+        style={
+          {
+            "--flavour-bg-next": activeFlavour.background,
+          } as React.CSSProperties
+        }
         onTransitionEnd={(event) => {
           if (event.propertyName === "opacity") {
             setBackgroundBaseId(activeIdRef.current);
@@ -402,7 +431,7 @@ export default function Home() {
           <span>330 ML</span>
         </div>
       </section>
-      <MobileFlavourSequence language={language} />
+      <MobileFlavourSequence language={language} canZoomed={mobileCanZoomed} />
       <FlavourSelector
         activeId={activeId}
         onSelect={selectFlavour}

@@ -171,18 +171,18 @@ a {
 }
 .radial-light {
   position: absolute;
-  width: min(44vw, 650px);
+  width: min(50vw, 720px);
   aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--product-light) 62%, transparent) 0%,
-    color-mix(in srgb, var(--product-light) 30%, transparent) 28%,
-    color-mix(in srgb, var(--product-light) 9%, transparent) 52%,
-    transparent 74%
+    color-mix(in srgb, var(--product-light) 45%, transparent) 0%,
+    color-mix(in srgb, var(--product-light) 22%, transparent) 32%,
+    color-mix(in srgb, var(--product-light) 7%, transparent) 58%,
+    transparent 78%
   );
   z-index: 1;
-  opacity: 0.7;
+  opacity: 0.85;
   transition: opacity 210ms cubic-bezier(0.55, 0, 1, 0.45);
 }
 .radial-light.is-initial {
@@ -195,7 +195,7 @@ a {
   opacity: 0;
 }
 .radial-light-in {
-  opacity: 0.7;
+  opacity: 0.85;
   transition-duration: 300ms;
 }
 .product-can {
@@ -382,7 +382,7 @@ a {
     transform: scale(0.9);
   }
   to {
-    opacity: 0.7;
+    opacity: 0.85;
     transform: scale(1);
   }
 }
@@ -571,6 +571,15 @@ a {
     height: 100%;
     z-index: 1;
     object-fit: contain;
+  }
+  .mobile-panel-product img.mobile-panel-can {
+    transform: scale(1);
+    transform-origin: center;
+    transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .mobile-panel-product img.mobile-panel-can.is-zoomed {
+    transform: scale(1.015);
+    will-change: transform;
   }
   .mobile-panel-light {
     position: absolute;
