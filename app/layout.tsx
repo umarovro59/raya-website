@@ -13,8 +13,13 @@ const unbounded = Unbounded({
 });
 
 export const metadata: Metadata = {
-  title: "RAYA | Pomegranate",
-  description: "RAYA sparkling fruit drink in Pomegranate.",
+  title: "RAYA - Taste the Fruit",
+  description: "RAYA is a sparkling fruit drink made in Andijan, Uzbekistan.",
+  openGraph: {
+    title: "RAYA - Taste the Fruit",
+    description: "RAYA is a sparkling fruit drink made in Andijan, Uzbekistan.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -23,13 +28,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${manrope.variable} ${unbounded.variable} h-full antialiased`}
     >
-      <link
-        rel="preload"
-        as="image"
-        href="/images/cans/pomegranate.webp"
-        type="image/webp"
-        fetchPriority="high"
-      />
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

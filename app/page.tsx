@@ -1,108 +1,23 @@
 "use client";
 
-import { startTransition, useEffect, useRef, useState } from "react";
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import {
   flavours,
   heroCopy,
   languages,
-  navigation,
   type FlavourId,
   type Language,
 } from "./flavours";
+import { SiteHeader } from "../components/site-header";
 
 const languageStorageKey = "raya-language";
-
-function Header({
-  language,
-  menuOpen,
-  onLanguageChange,
-  onMenuToggle,
-}: {
-  language: Language;
-  menuOpen: boolean;
-  onLanguageChange: (language: Language) => void;
-  onMenuToggle: () => void;
-}) {
-  const links = navigation[language];
-  return (
-    <header className="site-header">
-      <a className="wordmark" href="#hero" aria-label="RAYA home">
-        RAYA
-      </a>
-      <nav className="desktop-navigation" aria-label="Main navigation">
-        {links.map((link) => (
-          <a href="#" key={link}>
-            {link}
-          </a>
-        ))}
-      </nav>
-      <div className="header-tools">
-        <div className="language-switcher" aria-label="Select language">
-          {languages.map((item) => (
-            <button
-              className={item === language ? "is-active" : ""}
-              key={item}
-              type="button"
-              onClick={() => onLanguageChange(item)}
-            >
-              {item.toUpperCase()}
-            </button>
-          ))}
-        </div>
-        <button
-          className="menu-button"
-          type="button"
-          onClick={onMenuToggle}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-navigation"
-        >
-          {menuOpen ? heroCopy[language].close : heroCopy[language].menu}
-        </button>
-      </div>
-    </header>
-  );
-}
-
-function MobileNavigation({
-  language,
-  open,
-  onLanguageChange,
-  onClose,
-}: {
-  language: Language;
-  open: boolean;
-  onLanguageChange: (language: Language) => void;
-  onClose: () => void;
-}) {
-  return (
-    <div
-      className={`mobile-navigation ${open ? "is-open" : ""}`}
-      id="mobile-navigation"
-      aria-hidden={!open}
-    >
-      <div className="mobile-navigation-links">
-        {navigation[language].map((link) => (
-          <a href="#" key={link} onClick={onClose}>
-            {link}
-          </a>
-        ))}
-      </div>
-      <div className="mobile-language-switcher">
-        {languages.map((item) => (
-          <button
-            className={item === language ? "is-active" : ""}
-            key={item}
-            type="button"
-            onClick={() => onLanguageChange(item)}
-          >
-            {item.toUpperCase()}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function ProductCan({
   flavour,
@@ -350,6 +265,8 @@ export default function Home() {
     setLanguage(nextLanguage);
     setMenuOpen(false);
   };
+  const toggleMenu = useCallback(() => setMenuOpen((open) => !open), []);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   return (
     <main
@@ -379,17 +296,12 @@ export default function Home() {
         }}
         aria-hidden="true"
       />
-      <Header
+      <SiteHeader
         language={language}
         menuOpen={menuOpen}
         onLanguageChange={selectLanguage}
-        onMenuToggle={() => setMenuOpen(!menuOpen)}
-      />
-      <MobileNavigation
-        language={language}
-        open={menuOpen}
-        onLanguageChange={selectLanguage}
-        onClose={() => setMenuOpen(false)}
+        onMenuToggle={toggleMenu}
+        onMenuClose={closeMenu}
       />
       <section className="hero-content" aria-label="RAYA flavour campaign">
         <div className="copy-block">
