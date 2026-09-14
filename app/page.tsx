@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  startTransition,
   useCallback,
   useEffect,
   useRef,
@@ -11,13 +10,12 @@ import Image from "next/image";
 import {
   flavours,
   heroCopy,
-  languages,
   type FlavourId,
   type Language,
 } from "./flavours";
 import { SiteHeader } from "../components/site-header";
 
-const languageStorageKey = "raya-language";
+import { useLanguage } from "../components/language-provider";
 
 function ProductCan({
   flavour,
@@ -174,7 +172,7 @@ function FlavourSelector({
 }
 
 export default function Home() {
-  const [language, setLanguage] = useState<Language>("en");
+  const { language, setLanguage } = useLanguage();
   const [activeId, setActiveId] = useState<FlavourId>("pomegranate");
   const [displayedFlavourId, setDisplayedFlavourId] =
     useState<FlavourId>("pomegranate");
@@ -202,20 +200,6 @@ export default function Home() {
   const backgroundBaseFlavour =
     flavours.find((flavour) => flavour.id === backgroundBaseId) ?? flavours[0];
   const copy = heroCopy[language];
-
-  useEffect(() => {
-    const savedLanguage = window.localStorage.getItem(
-      languageStorageKey,
-    ) as Language | null;
-    if (savedLanguage && languages.includes(savedLanguage)) {
-      startTransition(() => setLanguage(savedLanguage));
-    }
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    window.localStorage.setItem(languageStorageKey, language);
-  }, [language]);
 
   useEffect(() => {
     let cancelled = false;

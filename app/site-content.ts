@@ -36,6 +36,7 @@ export const siteContent: Localized<Record<SitePage, Record<string, string>>> =
         imageTwo: "LIFESTYLE IMAGE",
         imageThree: "LIFESTYLE IMAGE",
         statement: "BRING THE\nFLAVOUR.",
+        caption: "GOOD COMPANY. COLD RAYA.",
         note: "Campaign photography coming soon.",
       },
       whereToBuy: {
@@ -77,6 +78,7 @@ export const siteContent: Localized<Record<SitePage, Record<string, string>>> =
         imageTwo: "ФОТО СТИЛЯ",
         imageThree: "ФОТО СТИЛЯ",
         statement: "ДОБАВЬ\nВКУС.",
+        caption: "ХОРОШАЯ КОМПАНИЯ. ХОЛОДНАЯ RAYA.",
         note: "Фотографии кампании появятся позже.",
       },
       whereToBuy: {
@@ -119,6 +121,7 @@ export const siteContent: Localized<Record<SitePage, Record<string, string>>> =
         imageTwo: "HAYOT TARZI",
         imageThree: "HAYOT TARZI",
         statement: "TA'MNI\nOLIB KEL.",
+        caption: "YAXSHI DAVRA. SOVUQ RAYA.",
         note: "Kampaniya fotosuratlari tez orada tayyorlanadi.",
       },
       whereToBuy: {

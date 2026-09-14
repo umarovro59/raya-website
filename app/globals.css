@@ -357,6 +357,10 @@ a {
   align-content: center;
   padding: 90px clamp(28px, 10vw, 160px) 120px;
 }
+.brand-hero-story {
+  min-height: min(75svh, 700px);
+  padding-block: clamp(64px, 8svh, 90px);
+}
 .brand-eyebrow,
 .site-footer-label {
   margin: 0;
@@ -394,7 +398,6 @@ a {
 .brand-band {
   padding: clamp(90px, 12vw, 190px) clamp(28px, 10vw, 160px);
 }
-.story-identity h2,
 .story-closing h2,
 .lifestyle-statement h2 {
   margin: 22px 0 0;
@@ -405,11 +408,6 @@ a {
   line-height: 0.88;
   white-space: pre-line;
 }
-.identity-water {
-  justify-self: end;
-  max-width: 220px;
-}
-.identity-water p,
 .story-closing p {
   margin: 0;
   font-size: 1rem;
@@ -560,17 +558,6 @@ a {
   font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.12em;
-}
-.locator-product {
-  position: relative;
-  min-height: 650px;
-  background: var(--brand-red);
-}
-.locator-product img {
-  width: min(78vw, 460px) !important;
-  height: 92% !important;
-  inset: auto 10% 0 auto !important;
-  object-fit: contain;
 }
 .site-footer {
   position: relative;
@@ -959,6 +946,10 @@ a {
     min-height: 76svh;
     padding: 70px 22px 80px;
   }
+  .brand-hero-story {
+    min-height: 0;
+    padding-block: clamp(80px, 12svh, 112px);
+  }
   .brand-hero h1 {
     margin: 20px 0 24px;
     font-size: clamp(2rem, 10.5vw, 4.5rem);
@@ -972,22 +963,14 @@ a {
   .brand-band {
     padding: 78px 22px;
   }
-  .story-identity,
   .locator-panel {
     display: block;
     min-height: 500px;
   }
-  .story-identity h2,
   .story-closing h2,
   .lifestyle-statement h2 {
     font-size: clamp(2rem, 9.2vw, 4rem);
     line-height: 1.04;
-  }
-  .story-identity h2 {
-    font-size: clamp(2.5rem, 13vw, 5rem);
-  }
-  .identity-water {
-    margin-top: 90px;
   }
   .story-closing {
     min-height: 430px;
@@ -1049,14 +1032,6 @@ a {
   }
   .locator-field {
     margin-top: 70px;
-  }
-  .locator-product {
-    min-height: 520px;
-  }
-  .locator-product img {
-    width: 82vw !important;
-    height: 90% !important;
-    right: 9% !important;
   }
   .site-footer {
     display: block;

@@ -1,48 +1,23 @@
 "use client";
 
 import Image from "next/image";
-import { startTransition, useCallback, useEffect, useState } from "react";
-import { flavours, languages, type Language } from "../app/flavours";
+import { useCallback, useState } from "react";
+import { flavours, type Language } from "../app/flavours";
 import { siteContent, type SitePage } from "../app/site-content";
+import lifestyleStyles from "../app/lifestyle/lifestyle.module.css";
+import heroStyles from "./editorial-hero.module.css";
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
 
-const languageStorageKey = "raya-language";
-
-function PlaceholderImage({
-  label,
-  className,
-}: {
-  label: string;
-  className: string;
-}) {
-  return (
-    <div
-      className={`editorial-placeholder ${className}`}
-      role="img"
-      aria-label={label}
-    >
-      <span>{label}</span>
-    </div>
-  );
-}
+import { useLanguage } from "./language-provider";
 
 function StoryPage({ copy }: { copy: Record<string, string> }) {
   return (
     <div className="brand-page story-page">
-      <section className="brand-hero brand-hero-story">
+      <section className={`brand-hero brand-hero-story ${heroStyles.entrance}`}>
         <p className="brand-eyebrow">{copy.eyebrow}</p>
         <h1>{copy.title}</h1>
         <p className="brand-intro">{copy.intro}</p>
-      </section>
-      <section className="story-identity brand-band">
-        <div className="identity-copy">
-          <p className="brand-eyebrow">PRODUCT IDENTITY</p>
-          <h2>{copy.identity}</h2>
-        </div>
-        <div className="identity-water">
-          <p>{copy.water}</p>
-        </div>
       </section>
       <section className="story-closing brand-band">
         <h2>{copy.closing}</h2>
@@ -60,10 +35,21 @@ function IngredientsPage({
 }) {
   return (
     <div className="brand-page ingredients-page">
-      <section className="brand-hero brand-hero-ingredients">
+      <section className={`brand-hero ${heroStyles.hero} ${heroStyles.ingredients}`}>
+        <div className={heroStyles.copy}>
         <p className="brand-eyebrow">{copy.eyebrow}</p>
         <h1>{copy.title}</h1>
         <p className="brand-intro">{copy.intro}</p>
+        </div>
+        <div className={heroStyles.image}>
+          <Image
+            src="/images/ingredients/234cc859-8599-49fe-baac-29729e84dacc.png"
+            alt={copy.fruit}
+            fill
+            sizes="(max-width: 700px) 92vw, 45vw"
+            loading="eager"
+          />
+        </div>
       </section>
       <section className="ingredient-rail">
         <article className="ingredient-feature ingredient-fruit">
@@ -97,27 +83,53 @@ function IngredientsPage({
   );
 }
 
+const lifestylePhotos = [
+  { file: "677496ed-0b12-44a8-97e5-648d207846b0.png", width: 1672, height: 941, alt: "RAYA Mojito, Blackberry, Pear, Apple and Malt" },
+  { file: "Pomegranate.png", width: 1122, height: 1402, alt: "RAYA Pomegranate" },
+  { file: "68b7d857-5f0e-4ea0-bec2-07f85e6d92ae.png", width: 1122, height: 1402, alt: "RAYA Blackberry" },
+  { file: "702f390b-23d7-422b-862f-deeb71a68a15.png", width: 1254, height: 1254, alt: "RAYA Pear & Pomegranate" },
+  { file: "AppleandBarley.png", width: 1122, height: 1402, alt: "RAYA Apple and Malt" },
+  { file: "c6ec8247-f444-43fc-820a-698e85376e8b.png", width: 1086, height: 1448, alt: "RAYA Apple and Malt, Blackberry & Pomegranate" },
+  { file: "f93be947-6d79-4678-b1dc-8eb3e938d715.png", width: 1122, height: 1402, alt: "RAYA Pomegranate & Pear" },
+];
+
 function LifestylePage({ copy }: { copy: Record<string, string> }) {
   return (
-    <div className="brand-page lifestyle-page">
-      <section className="brand-hero brand-hero-lifestyle">
+    <div className={`brand-page lifestyle-page ${lifestyleStyles.page}`}>
+      <section className={`brand-hero ${heroStyles.hero} ${heroStyles.lifestyle}`}>
+        <div className={heroStyles.copy}>
         <p className="brand-eyebrow">{copy.eyebrow}</p>
         <h1>{copy.title}</h1>
         <p className="brand-intro">{copy.intro}</p>
+        </div>
+        <div className={heroStyles.image}>
+          <Image
+            src="/images/lifestyle/AppleandBarley.png"
+            alt="RAYA Apple and Malt"
+            fill
+            sizes="(max-width: 700px) 83vw, 37vw"
+            loading="eager"
+          />
+        </div>
       </section>
-      <section className="lifestyle-image-wide">
-        <PlaceholderImage label={copy.imageOne} className="placeholder-wide" />
-      </section>
-      <section className="lifestyle-statement brand-band">
-        <h2>{copy.statement}</h2>
-        <p>{copy.note}</p>
-      </section>
-      <section className="lifestyle-image-pair">
-        <PlaceholderImage label={copy.imageTwo} className="placeholder-tall" />
-        <PlaceholderImage
-          label={copy.imageThree}
-          className="placeholder-short"
-        />
+      <section className={lifestyleStyles.collage} aria-label={copy.eyebrow}>
+        {lifestylePhotos.map((photo, index) => (
+          <div className={lifestyleStyles.photo} key={photo.file}>
+            <Image
+              src={`/images/lifestyle/${photo.file}`}
+              alt={photo.alt}
+              width={photo.width}
+              height={photo.height}
+              sizes={index === 0
+                ? "(max-width: 700px) 92vw, 54vw"
+                : "(max-width: 700px) 86vw, 32vw"}
+              loading={index === 0 ? "eager" : "lazy"}
+              style={{ animationDelay: `${270 + index * 90}ms` }}
+            />
+          </div>
+        ))}
+        <p className={lifestyleStyles.caption}>{copy.caption}</p>
+        <h2 className={lifestyleStyles.statement}>{copy.statement}</h2>
       </section>
     </div>
   );
@@ -126,7 +138,7 @@ function LifestylePage({ copy }: { copy: Record<string, string> }) {
 function WhereToBuyPage({ copy }: { copy: Record<string, string> }) {
   return (
     <div className="brand-page where-page">
-      <section className="brand-hero brand-hero-where">
+      <section className={`brand-hero brand-hero-where ${heroStyles.entrance}`}>
         <p className="brand-eyebrow">{copy.eyebrow}</p>
         <h1>{copy.title}</h1>
         <p className="brand-intro">{copy.intro}</p>
@@ -141,44 +153,21 @@ function WhereToBuyPage({ copy }: { copy: Record<string, string> }) {
           {copy.search}
         </div>
       </section>
-      <section className="locator-product">
-        <Image
-          src="/images/cans/pomegranate.webp"
-          alt="RAYA Pomegranate can"
-          fill
-          unoptimized
-          sizes="(max-width: 700px) 80vw, 440px"
-        />
-      </section>
     </div>
   );
 }
 
 export function BrandPage({ page }: { page: SitePage }) {
-  const [language, setLanguage] = useState<Language>("en");
+  const { language, setLanguage } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
   const copy = siteContent[language][page];
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem(
-      languageStorageKey,
-    ) as Language | null;
-    if (saved && languages.includes(saved)) {
-      startTransition(() => setLanguage(saved));
-    }
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    window.localStorage.setItem(languageStorageKey, language);
-  }, [language]);
 
   const handleMenuToggle = useCallback(() => setMenuOpen((open) => !open), []);
   const handleMenuClose = useCallback(() => setMenuOpen(false), []);
   const handleLanguageChange = useCallback((next: Language) => {
     setLanguage(next);
     setMenuOpen(false);
-  }, []);
+  }, [setLanguage]);
 
   return (
     <main className="brand-shell">

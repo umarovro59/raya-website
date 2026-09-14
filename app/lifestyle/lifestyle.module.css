@@ -1,0 +1,126 @@
+.page {
+  overflow: clip;
+}
+
+.collage {
+  display: grid;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  align-items: start;
+  row-gap: clamp(36px, 4vw, 64px);
+  padding: 12px 4vw clamp(70px, 7vw, 112px);
+}
+
+.photo {
+  min-width: 0;
+  margin: 0;
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  animation: photo-arrive 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Three deliberately composed groups; the frames keep their native ratios. */
+.photo:nth-child(1) { grid-column: 1 / 15; grid-row: 1; transform: rotate(-1deg); }
+.photo:nth-child(2) { grid-column: 18 / 25; grid-row: 1; margin-top: 3vw; transform: rotate(1deg); }
+.photo:nth-child(3) { grid-column: 2 / 8; grid-row: 2; margin-top: 3vw; }
+.photo:nth-child(4) { grid-column: 10 / 18; grid-row: 2; transform: rotate(-1deg); }
+.photo:nth-child(5) { grid-column: 18 / 24; grid-row: 2; margin-top: 4vw; margin-left: -2vw; transform: rotate(1.5deg); }
+.photo:nth-child(6) { grid-column: 1 / 8; grid-row: 3; transform: rotate(-1deg); }
+.photo:nth-child(7) { grid-column: 11 / 18; grid-row: 3; margin-top: 3vw; transform: rotate(1deg); }
+
+.caption {
+  grid-column: 2 / 14;
+  grid-row: 1;
+  align-self: end;
+  max-width: 280px;
+  margin: 0 0 4px;
+  color: var(--brand-cream);
+  font-size: clamp(0.65rem, 0.9vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  animation: text-arrive 720ms 540ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.collage .statement {
+  grid-column: 20 / 25;
+  grid-row: 3;
+  align-self: end;
+  margin: 0 0 2vw;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(1.6rem, 3.2vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.08em;
+  line-height: 0.95;
+  white-space: pre-line;
+  animation: text-arrive 720ms 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes text-arrive {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes photo-arrive {
+  from { opacity: 0; transform: translateY(26px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 700px) {
+  .collage {
+    display: flex;
+    flex-direction: column;
+    gap: 38px;
+    padding: 8px 4vw 64px;
+  }
+
+  .collage .photo {
+    width: 84vw;
+    margin: 0;
+    align-self: flex-start;
+  }
+
+  .photo:nth-child(1) { width: 92vw; transform: none; }
+  .photo:nth-child(2) { width: 80vw; align-self: flex-end; }
+  .photo:nth-child(3) { width: 78vw; margin-top: -56px; transform: rotate(-1deg); }
+  .photo:nth-child(4) { width: 86vw; align-self: flex-end; margin-top: 10px; transform: none; }
+  .photo:nth-child(5) { width: 80vw; margin-top: -52px; transform: rotate(-1deg); }
+  .photo:nth-child(6) { width: 86vw; align-self: flex-end; transform: rotate(1deg); }
+  .photo:nth-child(7) { width: 82vw; transform: rotate(-1deg); }
+
+  .photo:nth-child(1) { order: 0; }
+  .photo:nth-child(2) { order: 1; }
+  .photo:nth-child(3) { order: 2; }
+  .photo:nth-child(4) { order: 4; }
+  .photo:nth-child(5) { order: 5; }
+  .photo:nth-child(6) { order: 6; }
+  .photo:nth-child(7) { order: 7; }
+
+  .caption {
+    order: 3;
+    align-self: center;
+    max-width: min(280px, 80vw);
+    margin: 16px 0;
+    font-size: 0.75rem;
+  }
+
+  .collage .statement {
+    order: 8;
+    align-self: flex-start;
+    margin: 12px 2vw 0;
+    font-size: clamp(2.5rem, 12vw, 4rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caption,
+  .photo img,
+  .collage .statement {
+    animation: none;
+  }
+}
