@@ -10,6 +10,7 @@ import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
 
 import { useLanguage } from "./language-provider";
+import { useViewportReveal } from "./use-viewport-reveal";
 
 function StoryPage({ copy }: { copy: Record<string, string> }) {
   return (
@@ -41,7 +42,7 @@ function IngredientsPage({
         <h1>{copy.title}</h1>
         <p className="brand-intro">{copy.intro}</p>
         </div>
-        <div className={heroStyles.image}>
+        <div className={heroStyles.image} data-reveal="mobile">
           <Image
             src="/images/ingredients/234cc859-8599-49fe-baac-29729e84dacc.png"
             alt={copy.fruit}
@@ -102,7 +103,7 @@ function LifestylePage({ copy }: { copy: Record<string, string> }) {
         <h1>{copy.title}</h1>
         <p className="brand-intro">{copy.intro}</p>
         </div>
-        <div className={heroStyles.image}>
+        <div className={heroStyles.image} data-reveal="mobile">
           <Image
             src="/images/lifestyle/AppleandBarley.png"
             alt="RAYA Apple and Malt"
@@ -124,12 +125,12 @@ function LifestylePage({ copy }: { copy: Record<string, string> }) {
                 ? "(max-width: 700px) 92vw, 54vw"
                 : "(max-width: 700px) 86vw, 32vw"}
               loading={index === 0 ? "eager" : "lazy"}
-              style={{ animationDelay: `${270 + index * 90}ms` }}
+              data-reveal
             />
           </div>
         ))}
-        <p className={lifestyleStyles.caption}>{copy.caption}</p>
-        <h2 className={lifestyleStyles.statement}>{copy.statement}</h2>
+        <p className={lifestyleStyles.caption} data-reveal>{copy.caption}</p>
+        <h2 className={lifestyleStyles.statement} data-reveal>{copy.statement}</h2>
       </section>
     </div>
   );
@@ -143,21 +144,17 @@ function WhereToBuyPage({ copy }: { copy: Record<string, string> }) {
         <h1>{copy.title}</h1>
         <p className="brand-intro">{copy.intro}</p>
       </section>
-      <section className="locator-panel">
-        <div className="locator-copy">
-          <span className="brand-eyebrow">RAYA / LOCATOR</span>
-          <h2>{copy.comingSoon}</h2>
-          <p>{copy.note}</p>
-        </div>
-        <div className="locator-field" aria-label={copy.search}>
-          {copy.search}
-        </div>
+      <section className={`availability-panel ${heroStyles.entrance}`}>
+        <p className="brand-eyebrow" data-reveal>{copy.availability}</p>
+        <h2 data-reveal>{copy.availabilityTitle}</h2>
+        <p className="availability-note" data-reveal>{copy.note}</p>
       </section>
     </div>
   );
 }
 
 export function BrandPage({ page }: { page: SitePage }) {
+  const revealRef = useViewportReveal(page);
   const { language, setLanguage } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
   const copy = siteContent[language][page];
@@ -170,7 +167,7 @@ export function BrandPage({ page }: { page: SitePage }) {
   }, [setLanguage]);
 
   return (
-    <main className="brand-shell">
+    <main className="brand-shell" ref={revealRef}>
       <SiteHeader
         language={language}
         menuOpen={menuOpen}

@@ -23,6 +23,16 @@
   animation: photo-arrive 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+.photo img, .caption, .collage .statement {
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.photo img[data-reveal-state="pending"],
+.caption[data-reveal-state="pending"],
+.collage .statement[data-reveal-state="pending"] {
+  animation-play-state: paused;
+}
+
 /* Three deliberately composed groups; the frames keep their native ratios. */
 .photo:nth-child(1) { grid-column: 1 / 15; grid-row: 1; transform: rotate(-1deg); }
 .photo:nth-child(2) { grid-column: 18 / 25; grid-row: 1; margin-top: 3vw; transform: rotate(1deg); }
@@ -44,7 +54,7 @@
   letter-spacing: 0.08em;
   line-height: 1.6;
   text-transform: uppercase;
-  animation: text-arrive 720ms 540ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: text-arrive 720ms var(--reveal-delay, 0ms) cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .collage .statement {
@@ -58,7 +68,7 @@
   letter-spacing: -0.08em;
   line-height: 0.95;
   white-space: pre-line;
-  animation: text-arrive 720ms 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: text-arrive 720ms var(--reveal-delay, 0ms) cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes text-arrive {
@@ -67,11 +77,12 @@
 }
 
 @keyframes photo-arrive {
-  from { opacity: 0; transform: translateY(26px) scale(0.985); }
+  from { opacity: 0; transform: translateY(var(--photo-distance, 26px)) scale(var(--photo-scale, 0.985)); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @media (max-width: 700px) {
+  .photo img { --photo-distance: 22px; --photo-scale: 0.99; }
   .collage {
     display: flex;
     flex-direction: column;

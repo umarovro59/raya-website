@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Unbounded } from "next/font/google";
 import { LanguageProvider } from "../components/language-provider";
+import { pageMetadata, siteDescription } from "./site-metadata";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -14,13 +15,8 @@ const unbounded = Unbounded({
 });
 
 export const metadata: Metadata = {
-  title: "RAYA - Taste the Fruit",
-  description: "RAYA is a sparkling fruit drink made in Andijan, Uzbekistan.",
-  openGraph: {
-    title: "RAYA - Taste the Fruit",
-    description: "RAYA is a sparkling fruit drink made in Andijan, Uzbekistan.",
-    type: "website",
-  },
+  ...pageMetadata("RAYA — Taste the Fruit", siteDescription),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
