@@ -20,14 +20,22 @@
   font-size: clamp(3rem, 6.6vw, 6.5rem);
 }
 
-.copy > *,
 .entrance > * {
   animation: text-arrive 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.copy > :nth-child(2),
+.hero.entrance > .copy {
+  animation: none;
+}
+
+.hero.entrance .copy > * {
+  animation: text-arrive 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero.entrance .copy > :nth-child(2) { animation-delay: 90ms; }
+.hero.entrance .copy > :nth-child(3) { animation-delay: 180ms; }
+
 .entrance > :nth-child(2) { animation-delay: 90ms; }
-.copy > :nth-child(3),
 .entrance > :nth-child(3) { animation-delay: 180ms; }
 
 .entrance > :nth-child(1) { --text-arrive-distance: 12px; }
@@ -43,6 +51,13 @@
 
 .ingredients .image {
   aspect-ratio: 3 / 2;
+}
+
+@media (min-width: 1025px) {
+  .ingredients .image {
+    --image-arrive-x: -32px;
+    transform: translateX(-32px);
+  }
 }
 
 .lifestyle .image {
@@ -66,16 +81,16 @@
 }
 
 @keyframes image-arrive {
-  from { opacity: 0; transform: translateY(var(--image-arrive-distance, 26px)) scale(var(--image-arrive-scale, 0.985)); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translate(var(--image-arrive-x, 0), var(--image-arrive-distance, 26px)) scale(var(--image-arrive-scale, 0.985)); }
+  to { opacity: 1; transform: translate(var(--image-arrive-x, 0), 0) scale(1); }
 }
 
 @media (max-width: 700px) {
-  .copy > *, .entrance > * { animation-duration: 760ms; }
-  .copy > :nth-child(1), .entrance > :nth-child(1) { --text-arrive-distance: 12px; }
-  .copy > :nth-child(2), .entrance > :nth-child(2) { --text-arrive-distance: 20px; animation-delay: 110ms; }
-  .copy > :nth-child(3), .entrance > :nth-child(3) { --text-arrive-distance: 16px; animation-delay: 220ms; }
-  .image { --image-arrive-distance: 22px; --image-arrive-scale: 0.99; animation-duration: 780ms; animation-delay: 330ms; }
+  .entrance .copy > *, .entrance > * { animation-duration: 720ms; }
+  .entrance .copy > :nth-child(1), .entrance > :nth-child(1) { --text-arrive-distance: 12px; animation-delay: 0ms; }
+  .entrance .copy > :nth-child(2), .entrance > :nth-child(2) { --text-arrive-distance: 20px; animation-delay: 100ms; }
+  .entrance .copy > :nth-child(3), .entrance > :nth-child(3) { --text-arrive-distance: 16px; animation-delay: 200ms; }
+  .entrance > .image { --image-arrive-distance: 22px; --image-arrive-scale: 0.99; animation: image-arrive 760ms 300ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 
   .hero.hero {
     grid-template-columns: minmax(0, 1fr);
@@ -106,7 +121,7 @@
 .image[data-reveal-state="pending"] { animation-play-state: paused; }
 
 @media (prefers-reduced-motion: reduce) {
-  .copy > *,
+  .entrance .copy > *,
   .entrance > *,
   .image { animation: none; }
 }

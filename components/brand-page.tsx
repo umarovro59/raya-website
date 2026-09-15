@@ -36,13 +36,13 @@ function IngredientsPage({
 }) {
   return (
     <div className="brand-page ingredients-page">
-      <section className={`brand-hero ${heroStyles.hero} ${heroStyles.ingredients}`}>
+      <section className={`brand-hero ${heroStyles.hero} ${heroStyles.ingredients} ${heroStyles.entrance}`}>
         <div className={heroStyles.copy}>
         <p className="brand-eyebrow">{copy.eyebrow}</p>
         <h1>{copy.title}</h1>
         <p className="brand-intro">{copy.intro}</p>
         </div>
-        <div className={heroStyles.image} data-reveal="mobile">
+        <div className={heroStyles.image}>
           <Image
             src="/images/ingredients/234cc859-8599-49fe-baac-29729e84dacc.png"
             alt={copy.fruit}
@@ -97,13 +97,13 @@ const lifestylePhotos = [
 function LifestylePage({ copy }: { copy: Record<string, string> }) {
   return (
     <div className={`brand-page lifestyle-page ${lifestyleStyles.page}`}>
-      <section className={`brand-hero ${heroStyles.hero} ${heroStyles.lifestyle}`}>
+      <section className={`brand-hero ${heroStyles.hero} ${heroStyles.lifestyle} ${heroStyles.entrance}`}>
         <div className={heroStyles.copy}>
         <p className="brand-eyebrow">{copy.eyebrow}</p>
         <h1>{copy.title}</h1>
         <p className="brand-intro">{copy.intro}</p>
         </div>
-        <div className={heroStyles.image} data-reveal="mobile">
+        <div className={heroStyles.image}>
           <Image
             src="/images/lifestyle/AppleandBarley.png"
             alt="RAYA Apple and Malt"

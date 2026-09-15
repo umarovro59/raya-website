@@ -14,6 +14,7 @@ import {
   type Language,
 } from "./flavours";
 import { SiteHeader } from "../components/site-header";
+import { SiteFooter } from "../components/site-footer";
 
 import { useLanguage } from "../components/language-provider";
 
@@ -35,6 +36,7 @@ function ProductCan({
   onProductReady: (id: FlavourId) => void;
 }) {
   const imageRef = useRef<HTMLImageElement>(null);
+  const [isWobbling, setIsWobbling] = useState(false);
   const reportImageReady = useCallback(
     async (image: HTMLImageElement) => {
       const source = image.currentSrc || image.src;
@@ -79,7 +81,13 @@ function ProductCan({
       }}
     >
       <div
-        className={`product-can ${initialAnimation ? "is-initial" : ""} product-can-${transitionPhase}`}
+        className={`product-can ${initialAnimation ? "is-initial" : ""} product-can-${transitionPhase} ${isWobbling ? "is-wobbling" : ""}`}
+        onPointerDown={(event) => {
+          if (event.pointerType !== "mouse") setIsWobbling(true);
+        }}
+        onAnimationEnd={(event) => {
+          if (event.animationName === "can-wobble") setIsWobbling(false);
+        }}
       >
         <Image
           ref={imageRef}
@@ -92,6 +100,38 @@ function ProductCan({
           onLoad={(event) => void reportImageReady(event.currentTarget)}
         />
       </div>
+    </div>
+  );
+}
+
+function MobileCan({
+  flavour,
+  canZoomed,
+}: {
+  flavour: (typeof flavours)[number];
+  canZoomed: boolean;
+}) {
+  const [isWobbling, setIsWobbling] = useState(false);
+
+  return (
+    <div
+      className={`mobile-can-interaction ${isWobbling ? "is-wobbling" : ""}`}
+      onPointerDown={(event) => {
+        if (event.pointerType !== "mouse") setIsWobbling(true);
+      }}
+      onAnimationEnd={(event) => {
+        if (event.animationName === "can-wobble") setIsWobbling(false);
+      }}
+    >
+      <Image
+        className={`mobile-panel-can ${canZoomed ? "is-zoomed" : ""}`}
+        src={flavour.image}
+        alt={`RAYA ${flavour.name.en} can`}
+        fill
+        unoptimized
+        loading={flavour.id === "pomegranate" ? "eager" : "lazy"}
+        decoding="async"
+      />
     </div>
   );
 }
@@ -125,15 +165,7 @@ function MobileFlavourSequence({
           </div>
           <div className="mobile-panel-product">
             <div className="mobile-panel-light" aria-hidden="true" />
-            <Image
-              className={`mobile-panel-can ${canZoomed ? "is-zoomed" : ""}`}
-              src={flavour.image}
-              alt={`RAYA ${flavour.name.en} can`}
-              fill
-              unoptimized
-              loading={flavour.id === "pomegranate" ? "eager" : "lazy"}
-              decoding="async"
-            />
+            <MobileCan flavour={flavour} canZoomed={canZoomed} />
           </div>
           <div className="mobile-panel-lockup">
             <strong>{flavour.name[language]}</strong>
@@ -233,9 +265,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => setHasScrolled(window.scrollY > 12);
+    const handleScroll = () => {
+      if (window.scrollY <= 28) return;
+
+      setHasScrolled(true);
+      window.removeEventListener("scroll", handleScroll);
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -380,6 +417,7 @@ export default function Home() {
       <div className="scroll-cue" aria-hidden="true">
         <span>FLAVOURS ↓</span>
       </div>
+      <SiteFooter language={language} onLanguageChange={selectLanguage} />
     </main>
   );
 }
