@@ -47,7 +47,7 @@ function IngredientsPage({
             src="/images/ingredients/234cc859-8599-49fe-baac-29729e84dacc.png"
             alt={copy.fruit}
             fill
-            sizes="(max-width: 700px) 92vw, 45vw"
+            sizes="(max-width: 800px) 92vw, 45vw"
             loading="eager"
           />
         </div>
@@ -108,7 +108,7 @@ function LifestylePage({ copy }: { copy: Record<string, string> }) {
             src="/images/lifestyle/AppleandBarley.png"
             alt="RAYA Apple and Malt"
             fill
-            sizes="(max-width: 700px) 83vw, 37vw"
+            sizes="(max-width: 800px) 83vw, 37vw"
             loading="eager"
           />
         </div>
@@ -122,8 +122,8 @@ function LifestylePage({ copy }: { copy: Record<string, string> }) {
               width={photo.width}
               height={photo.height}
               sizes={index === 0
-                ? "(max-width: 700px) 92vw, 54vw"
-                : "(max-width: 700px) 86vw, 32vw"}
+                ? "(max-width: 800px) 92vw, 54vw"
+                : "(max-width: 800px) 86vw, 32vw"}
               loading={index === 0 ? "eager" : "lazy"}
               data-reveal
             />

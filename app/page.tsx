@@ -235,7 +235,7 @@ export default function Home() {
 
   useEffect(() => {
     let cancelled = false;
-    const preloadFlavours = window.matchMedia("(min-width: 701px)").matches
+    const preloadFlavours = window.matchMedia("(min-width: 801px)").matches
       ? flavours
       : flavours.slice(0, 2);
     const preloadImages = preloadFlavours.map(async (flavour) => {
@@ -278,7 +278,7 @@ export default function Home() {
 
   useEffect(() => {
     const handleMobileCanZoom = () => {
-      if (window.innerWidth > 700) return;
+      if (window.innerWidth > 800) return;
       const scrollY = window.scrollY;
       if (!mobileCanZoomedRef.current && scrollY > 16) {
         mobileCanZoomedRef.current = true;

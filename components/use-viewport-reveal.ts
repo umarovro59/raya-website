@@ -10,7 +10,7 @@ export function useViewportReveal(page: string) {
     const root = ref.current;
     if (!root || !('IntersectionObserver' in window)) return;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const mobile = window.matchMedia('(max-width: 700px)');
+    const mobile = window.matchMedia('(max-width: 800px)');
     const targets = Array.from(root.querySelectorAll<HTMLElement>('[data-reveal]'));
     const observer = new IntersectionObserver((entries) => {
       entries.filter((entry) => entry.isIntersecting).forEach((entry, index) => {

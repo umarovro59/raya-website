@@ -16,7 +16,9 @@ const unbounded = Unbounded({
 
 export const metadata: Metadata = {
   ...pageMetadata("RAYA — Taste the Fruit", siteDescription),
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://raya-website-theta.vercel.app",
+  ),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

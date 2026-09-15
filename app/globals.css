@@ -736,7 +736,7 @@ a {
     width: min(34vw, 400px);
   }
 }
-@media (max-width: 700px) {
+@media (max-width: 800px) {
   .campaign {
     height: auto;
     min-height: 100svh;
@@ -764,12 +764,14 @@ a {
     gap: 9px;
   }
   .header-tools .language-switcher button {
-    min-width: 22px;
+    min-width: 44px;
     min-height: 44px;
     font-size: 0.64rem;
   }
   .menu-button {
     display: block;
+    min-width: 44px;
+    min-height: 44px;
     opacity: 1;
     font-size: 0.7rem;
     font-weight: 800;
@@ -1117,7 +1119,7 @@ a {
     gap: 5px;
   }
   .header-tools .language-switcher button {
-    min-width: 20px;
+    min-width: 44px;
     font-size: 0.6rem;
   }
 }

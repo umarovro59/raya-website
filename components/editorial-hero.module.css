@@ -85,7 +85,7 @@
   to { opacity: 1; transform: translate(var(--image-arrive-x, 0), 0) scale(1); }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
   .entrance .copy > *, .entrance > * { animation-duration: 720ms; }
   .entrance .copy > :nth-child(1), .entrance > :nth-child(1) { --text-arrive-distance: 12px; animation-delay: 0ms; }
   .entrance .copy > :nth-child(2), .entrance > :nth-child(2) { --text-arrive-distance: 20px; animation-delay: 100ms; }
@@ -121,7 +121,10 @@
 .image[data-reveal-state="pending"] { animation-play-state: paused; }
 
 @media (prefers-reduced-motion: reduce) {
-  .entrance .copy > *,
-  .entrance > *,
+  .entrance > p,
+  .entrance > h1,
+  .entrance > h2,
+  .entrance .copy > p,
+  .entrance .copy > h1,
   .image { animation: none; }
 }

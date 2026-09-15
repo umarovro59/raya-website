@@ -81,7 +81,7 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
   .photo img { --photo-distance: 22px; --photo-scale: 0.99; }
   .collage {
     display: flex;

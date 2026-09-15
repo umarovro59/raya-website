@@ -39,7 +39,7 @@ export function SiteHeader({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onMenuClose();
     };
-    const desktop = window.matchMedia("(min-width: 701px)");
+    const desktop = window.matchMedia("(min-width: 801px)");
     const handleResize = () => {
       if (desktop.matches) onMenuClose();
     };
@@ -83,6 +83,7 @@ export function SiteHeader({
                 key={item}
                 type="button"
                 onClick={() => onLanguageChange(item)}
+                aria-pressed={item === language}
               >
                 {item.toUpperCase()}
               </button>
@@ -125,6 +126,7 @@ export function SiteHeader({
               key={item}
               type="button"
               onClick={() => onLanguageChange(item)}
+              aria-pressed={item === language}
             >
               {item.toUpperCase()}
             </button>
