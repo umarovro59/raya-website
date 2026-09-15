@@ -35,7 +35,9 @@ export function SiteHeader({
     if (!menuOpen) return;
 
     const previousOverflow = document.body.style.overflow;
+    const previousOverflowAnchor = document.body.style.overflowAnchor;
     document.body.style.overflow = "hidden";
+    document.body.style.overflowAnchor = "none";
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onMenuClose();
     };
@@ -47,6 +49,7 @@ export function SiteHeader({
     desktop.addEventListener("change", handleResize);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.body.style.overflowAnchor = previousOverflowAnchor;
       document.removeEventListener("keydown", handleKeyDown);
       desktop.removeEventListener("change", handleResize);
     };
@@ -117,19 +120,6 @@ export function SiteHeader({
             >
               {link}
             </Link>
-          ))}
-        </div>
-        <div className="mobile-language-switcher">
-          {languages.map((item) => (
-            <button
-              className={item === language ? "is-active" : ""}
-              key={item}
-              type="button"
-              onClick={() => onLanguageChange(item)}
-              aria-pressed={item === language}
-            >
-              {item.toUpperCase()}
-            </button>
           ))}
         </div>
       </div>

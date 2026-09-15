@@ -163,7 +163,6 @@ export function BrandPage({ page }: { page: SitePage }) {
   const handleMenuClose = useCallback(() => setMenuOpen(false), []);
   const handleLanguageChange = useCallback((next: Language) => {
     setLanguage(next);
-    setMenuOpen(false);
   }, [setLanguage]);
 
   return (

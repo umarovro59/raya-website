@@ -344,7 +344,6 @@ export default function Home() {
 
   const selectLanguage = (nextLanguage: Language) => {
     setLanguage(nextLanguage);
-    setMenuOpen(false);
   };
   const toggleMenu = useCallback(() => setMenuOpen((open) => !open), []);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
